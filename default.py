@@ -1,7 +1,7 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-import urllib
-import urllib2
+
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import socket
 import xbmcaddon
 import xbmcplugin
@@ -59,6 +59,7 @@ def playVideo(id):
 
 def listVideos(url):
     content = getUrl(url)
+    content = content.decode()
     spl = content.split("<div class='main'>")
     for i in range(1, len(spl), 1):
         entry = spl[i]
@@ -105,9 +106,9 @@ def listVideos(url):
 
 
 def getUrl(url):
-    req = urllib2.Request(url)
+    req = urllib.request.Request(url)
     req.add_header('User-Agent', 'BestOfYoutube XBMC Addon v2.1.1')
-    response = urllib2.urlopen(req)
+    response = urllib.request.urlopen(req)
     content = response.read()
     response.close()
     return content
@@ -121,9 +122,10 @@ def cleanTitle(title):
 
 
 def addLink(name, url, mode, iconimage, desc):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    u = sys.argv[0]+"?url="+urllib.parse.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name)
+    liz.setArt({'icon':'DefaultVideo.png', 'thumb':iconimage})
     liz.setInfo(type="Video", infoLabels={"Title": name, "Plot": desc})
     liz.setProperty('IsPlayable', 'true')
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz)
@@ -131,9 +133,10 @@ def addLink(name, url, mode, iconimage, desc):
 
 
 def addDir(name, url, mode, iconimage):
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)
+    u = sys.argv[0]+"?url="+urllib.parse.quote_plus(url)+"&mode="+str(mode)
     ok = True
-    liz = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(name)
+    liz.setArt({'icon':'DefaultVideo.png', 'thumb':iconimage})
     liz.setInfo(type="Video", infoLabels={"Title": name})
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
     return ok
@@ -151,8 +154,8 @@ def parameters_string_to_dict(parameters):
     return paramDict
 
 params = parameters_string_to_dict(sys.argv[2])
-mode = urllib.unquote_plus(params.get('mode', ''))
-url = urllib.unquote_plus(params.get('url', ''))
+mode = urllib.parse.unquote_plus(params.get('mode', ''))
+url = urllib.parse.unquote_plus(params.get('url', ''))
 
 if mode == 'listVideos':
     listVideos(url)

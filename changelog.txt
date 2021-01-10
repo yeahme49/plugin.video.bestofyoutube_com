@@ -21,3 +21,5 @@
 2.1.1
 - Added custom user-agent
 - Video listing now makes 2 requests (to show more videos)
+3.0.0
+- Ported to Matrix
